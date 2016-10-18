@@ -41,8 +41,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ImageView ivPaste;
     private String fileCopied;
     private boolean checkCopyOrCut;
-    private Dialog dialog;
-    private ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,14 +72,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
         listViewDrawerAdapter = new ListViewDrawerAdapter(this, arrItemViewDrawer);
         lvDrawer.setAdapter(listViewDrawerAdapter);
-    }
-    private void showDialogProgressBar(){
-        dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog);
-        dialog.show();
-    }
-    private void hideDialogProgressBar(){
-        dialog.hide();
     }
     private void initViews() {
         initFragment();
@@ -116,10 +106,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         ivPaste.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Message message = new Message();
-                message.what = 1;
-                handler.sendMessage(message);
                 if(checkCopyOrCut) {
+
                     FragmentMain.copyFileOrDirectory(fileCopied, arrHistoryPath.get(arrHistoryPath.size() - 1));
                     fragmentMain.initData(arrHistoryPath.get(arrHistoryPath.size() - 1));
                     ivPaste.setVisibility(View.INVISIBLE);
@@ -133,17 +121,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
 
     }
-    private Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if(msg.what == 1){
-                showDialogProgressBar();
-            }else {
-                hideDialogProgressBar();
-            }
-        }
-    };
     public void setFileCopied(String fileCopied, boolean checkCopyOrCut){
         this.fileCopied = fileCopied;
         this.checkCopyOrCut = checkCopyOrCut;

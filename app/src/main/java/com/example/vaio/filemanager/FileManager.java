@@ -21,9 +21,17 @@ public class FileManager {
                 ItemViewFile itemViewFile;
                 String fileName = files[i].getName();
                 if(files[i].isDirectory()) {
-                    itemViewFile = new ItemViewFile(MainActivity.FOLDER, fileName,files[i].getPath(),true);
+                    itemViewFile = new ItemViewFile(R.drawable.folder, fileName,files[i].getPath(),true);
                 }else {
-                    itemViewFile = new ItemViewFile(MainActivity.FILE, fileName,files[i].getPath(),false);
+                    if (files[i].getPath().contains(".jpg")||files[i].getPath().contains(".jepg")||files[i].getPath().contains(".png")){
+                        itemViewFile = new ItemViewFile(R.drawable.image, fileName,files[i].getPath(),false);
+                    }else if(files[i].getPath().contains(".mp4")){
+                        itemViewFile = new ItemViewFile( R.drawable.video,fileName,files[i].getPath(),false);
+                    }else if(files[i].getPath().contains(".pdf")){
+                        itemViewFile = new ItemViewFile(R.drawable.document,fileName,files[i].getPath(),false);
+                    }else {
+                        itemViewFile = new ItemViewFile(R.drawable.document,fileName,files[i].getPath(),false);
+                    }
                 }
                 arrItemViewFile.add(itemViewFile);
             }
