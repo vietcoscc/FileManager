@@ -201,6 +201,12 @@ public class FragmentMain extends Fragment {
             } else if (file.getName().contains(".mp4")) {
                 intent.setDataAndType(Uri.fromFile(file), "video/*");
                 startActivity(intent);
+            }else if (file.getName().contains(".mp3")||file.getName().contains(".wav")) {
+                intent.setDataAndType(Uri.fromFile(file), "audio/*");
+                startActivity(intent);
+            }else {
+                intent.setData(Uri.fromFile(file));
+                startActivity(intent);
             }
         }
         listViewMainAdapter.notifyDataSetChanged();
