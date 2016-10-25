@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -54,8 +55,10 @@ public class FragmentMain extends Fragment {
     private TextView tvFolderStatus;
     private ProgressBar progressBar;
     private SearchView searchView;
-    private  ArrayList<ItemViewFile> arrTmp = new ArrayList<>();; // mang tam
+    private ArrayList<ItemViewFile> arrTmp = new ArrayList<>();
+    ; // mang tam
     private ArrayList<ItemViewFile> arrLastItemViewFile = new ArrayList<>();
+
     public FragmentMain(ArrayList<String> arrHistotyPath) {
         this.arrHistotyPath = arrHistotyPath;
     }
@@ -64,9 +67,6 @@ public class FragmentMain extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_main, container, false);
-
-
-
 
 
         tvFolderStatus = (TextView) v.findViewById(R.id.folder_status);
@@ -191,42 +191,50 @@ public class FragmentMain extends Fragment {
         }
     }
 
-    public void filter(String newText){
+    public void filter(String newText) {
         arrTmp.clear();
-        for(int i=0;i<arrItemViewFile.size();i++){
-            if(arrItemViewFile.get(i).getTv().contains(newText)){
+        for (int i = 0; i < arrItemViewFile.size(); i++) {
+            if (arrItemViewFile.get(i).getTv().contains(newText)) {
                 arrTmp.add(arrItemViewFile.get(i));
             }
         }
         listViewMainAdapter = new ListViewMainAdapter(getActivity().getBaseContext(), arrTmp);
         listView.setAdapter(listViewMainAdapter);
     }
+
     public void doItemClick(int position) {
         MainActivity main = (MainActivity) getActivity();
         searchView = main.getSearchView();
 
-        if(searchView.isIconified()) {
-            handleItemClick(arrItemViewFile, position,true);
-        }else {
-            handleItemClick(arrTmp,position,false);
+        if (searchView.isIconified()) {
+            handleItemClick(arrItemViewFile, position, true);
+        } else {
+            handleItemClick(arrTmp, position, false);
         }
         arrTmp.clear();
         listViewMainAdapter.notifyDataSetChanged();
         searchView.onActionViewCollapsed();
     }
-    private void handleItemClick(ArrayList<ItemViewFile> arrItemViewFile,int position,boolean check){
-        String path = arrItemViewFile.get(position).getPath();
+
+    private void handleItemClick(ArrayList<ItemViewFile> arrItemViewFile, int position, boolean check) {
+        if (arrItemViewFile.isEmpty()) {
+            handleItemClick(this.arrItemViewFile, position, true);
+            return;
+        }
+            String path = arrItemViewFile.get(position).getPath();
         File file = new File(path);
         if (file.isDirectory()) {
             arrHistotyPath.add(path);
-            initData(arrHistotyPath.get(arrHistotyPath.size()-1));
+            initData(arrHistotyPath.get(arrHistotyPath.size() - 1));
             arrItemViewFile.clear();
             arrItemViewFile = fileManager.getArrayFile(path);
-            if(!check){
-                for(int i=arrItemViewFile.size()/2-1;i<arrItemViewFile.size();i++){
-                    arrItemViewFile.remove(i);
+            if (!check) {
+                if (arrItemViewFile.size() > 0) {
+                    for (int i = arrItemViewFile.size() / 2 - 1; i < arrItemViewFile.size(); i++) {
+                        arrItemViewFile.remove(i);
+                    }
                 }
-                if(arrItemViewFile.size()>1) {
+                if (arrItemViewFile.size() > 1) {
                     arrItemViewFile.remove(arrItemViewFile.size() - 2);
                 }
             }
@@ -238,21 +246,32 @@ public class FragmentMain extends Fragment {
         } else {
 
             Intent intent = new Intent();
-            if (file.getName().contains(".jpg")) {
+            if (file.getName().contains(".jpg") || file.getName().contains(".png")) {
                 intent.setDataAndType(Uri.fromFile(file), "image/*");
                 startActivity(intent);
             } else if (file.getName().contains(".mp4")) {
                 intent.setDataAndType(Uri.fromFile(file), "video/*");
                 startActivity(intent);
-            }else if (file.getName().contains(".mp3")||file.getName().contains(".wav")) {
+            } else if (file.getName().contains(".mp3") || file.getName().contains(".wav")) {
                 intent.setDataAndType(Uri.fromFile(file), "audio/*");
                 startActivity(intent);
-            }else {
+            } else if (file.getName().contains(".apk")) {
+                file.setReadable(true, false);
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+                startActivity(intent);
+            } else if (file.getName().contains(".txt")) {
+                intent.setDataAndType(Uri.fromFile(file), "text/*");
+                startActivity(intent);
+            } else {
                 intent.setData(Uri.fromFile(file));
                 startActivity(intent);
             }
+
+
         }
     }
+
     public void onBackPress() {
         tvFolderStatus.setVisibility(View.INVISIBLE);
         if (arrHistotyPath.size() > 1) {
@@ -286,16 +305,17 @@ public class FragmentMain extends Fragment {
         arrItemViewFile.clear();
 
         arrItemViewFile = fileManager.getArrayFile(path);
-       if(arrItemViewFile.isEmpty()){
-           tvFolderStatus.setVisibility(View.VISIBLE);
-       }else {
-           tvFolderStatus.setVisibility(View.INVISIBLE);
-       }
+        if (arrItemViewFile.isEmpty()) {
+            tvFolderStatus.setVisibility(View.VISIBLE);
+        } else {
+            tvFolderStatus.setVisibility(View.INVISIBLE);
+        }
         listViewMainAdapter = new ListViewMainAdapter(getActivity().getBaseContext(), arrItemViewFile);
         listView.setAdapter(listViewMainAdapter);
 
     }
-//    public void initData(ArrayList<ItemViewFile> arrItemViewFile){
+
+    //    public void initData(ArrayList<ItemViewFile> arrItemViewFile){
 //        listView = (ListView) v.findViewById(R.id.lv_main);
 ////        this.arrItemViewFile.clear();
 ////        this.arrItemViewFile = arrItemViewFile;
