@@ -8,12 +8,10 @@ public class ItemViewFile  {
     private int iv;
     private String tv;
     private String path;
-    private boolean isDirectory;
-    public ItemViewFile(int iv, String tv ,String path, boolean isDirectory) {
+    public ItemViewFile(int iv, String tv ,String path) {
         this.iv = iv;
         this.tv = tv;
         this.path = path;
-        this.isDirectory = isDirectory;
     }
 
     public int getIv() {
@@ -26,9 +24,5 @@ public class ItemViewFile  {
 
     public String getPath() {
         return path;
-    }
-
-    public boolean isDirectory() {
-        return isDirectory;
     }
 }

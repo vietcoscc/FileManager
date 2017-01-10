@@ -21,16 +21,18 @@ public class FileManager {
                 ItemViewFile itemViewFile;
                 String fileName = files[i].getName();
                 if(files[i].isDirectory()) {
-                    itemViewFile = new ItemViewFile(R.drawable.folder, fileName,files[i].getPath(),true);
+                    itemViewFile = new ItemViewFile(R.drawable.folder, fileName,files[i].getPath());
                 }else {
                     if (files[i].getPath().contains(".jpg")||files[i].getPath().contains(".jepg")||files[i].getPath().contains(".png")){
-                        itemViewFile = new ItemViewFile(R.drawable.image, fileName,files[i].getPath(),false);
+                        itemViewFile = new ItemViewFile(R.drawable.image, fileName,files[i].getPath());
                     }else if(files[i].getPath().contains(".mp4")){
-                        itemViewFile = new ItemViewFile( R.drawable.video,fileName,files[i].getPath(),false);
+                        itemViewFile = new ItemViewFile( R.drawable.video,fileName,files[i].getPath());
                     }else if(files[i].getPath().contains(".pdf")){
-                        itemViewFile = new ItemViewFile(R.drawable.document,fileName,files[i].getPath(),false);
-                    }else {
-                        itemViewFile = new ItemViewFile(R.drawable.document,fileName,files[i].getPath(),false);
+                        itemViewFile = new ItemViewFile(R.drawable.document,fileName,files[i].getPath());
+                    }else if(files[i].getPath().contains(".apk")){
+                        itemViewFile = new ItemViewFile(R.mipmap.ic_launcher,fileName,files[i].getPath());
+                    }else{
+                        itemViewFile = new ItemViewFile(R.drawable.document,fileName,files[i].getPath());
                     }
                 }
                 arrItemViewFile.add(itemViewFile);

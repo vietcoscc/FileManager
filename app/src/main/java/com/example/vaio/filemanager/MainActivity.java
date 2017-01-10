@@ -2,11 +2,8 @@ package com.example.vaio.filemanager;
 
 import android.Manifest;
 import android.app.ActionBar;
-import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,18 +11,23 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 
 import com.t3h.adapter.ListViewDrawerAdapter;
 import com.t3h.fragment.FragmentMain;
 import com.t3h.model.ItemViewDrawer;
+import com.t3h.model.ItemViewFile;
 
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     private static final int REQUEST_READWRITE_STORAGE = 1;
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ImageView ivPaste;
     private String fileCopied;
     private boolean checkCopyOrCut;
+    private SearchView searchView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,6 +124,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.search_bar_menu,menu);
+        MenuItem  item = menu.findItem(R.id.search_bar);
+        searchView = (SearchView) item.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                fragmentMain.filter("");
+                fragmentMain.filter(newText);
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
+
     public void setFileCopied(String fileCopied, boolean checkCopyOrCut){
         this.fileCopied = fileCopied;
         this.checkCopyOrCut = checkCopyOrCut;
@@ -174,6 +200,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
     @Override
     public void onBackPressed() {
-        fragmentMain.onBackPress();
+
+
+        if(!searchView.isIconified()){
+            searchView.setIconified(true);
+        }else {
+            fragmentMain.onBackPress();
+        }
+    }
+
+    public SearchView getSearchView() {
+        return searchView;
+    }
+    public void showEmpty(){
+
     }
 }
